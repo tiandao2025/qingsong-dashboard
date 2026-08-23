@@ -565,10 +565,7 @@ async function sendReply(id) {
   if (!text) { input.focus(); return; }
   const c = COMMENTS.find(x => String(x.id) === String(id));
   if (!c) return;
-  if (c.source === "youtube-json") {
-    // 线上快照模式：数据为定时同步，不支持实时回复
-    alert("当前为线上数据快照模式，不支持直接回复评论。如需回复，请通过本地服务 http://localhost:8080 操作");
-  } else if (c.source === "youtube-api") {
+  if (c.source === "youtube-api") {
     // YouTube 真实评论：通过 yt-server.js 调用 POST /api/youtube/reply 发布回复
     try {
       const res = await fetch("/api/youtube/reply", {
@@ -616,28 +613,17 @@ renderComments();
 
 /* ================== YouTube 真实数据接入（API 由 yt-server.js 提供，需通过 http://localhost:8080 访问） ================== */
 
-// 统一数据源加载：优先本地 yt-server.js 实时 API，失败则读线上静态 data/*.json（定时同步快照）
-async function fetchData(apiPath, jsonPath) {
-  try {
-    const res = await fetch(apiPath);
-    if (res.ok) return { source: 'api', data: await res.json() };
-  } catch (e) { /* 本地服务未启动，转静态数据 */ }
-  try {
-    const res = await fetch(jsonPath);
-    if (res.ok) return { source: 'json', data: await res.json() };
-  } catch (e) { /* 静态数据不存在 */ }
-  return null;
-}
-
-// 1) 页面顶部接入状态横幅：优先 /api/status，其次 data/status.json（线上定时同步快照）
+// 1) 页面顶部接入状态横幅：页面加载时 fetch('/api/status')
+// /api/status 新结构：{ youtube:{authorized,channel?}, bilibili:{configured,authorized,channel?,error?} }（API 由 yt-server.js 提供）
 async function initStatus() {
   let data = null;
-  let dataSource = 'api';
-  const r = await fetchData("/api/status", "./data/status.json");
-  if (r) { data = r.data; dataSource = r.source; } else {
-    console.warn("[api] 接入状态检测失败（本地请通过 http://localhost:8080 访问）");
+  try {
+    const res = await fetch("/api/status");
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    data = await res.json();
+  } catch (e) {
+    console.warn("[api] 接入状态检测失败（请通过 http://localhost:8080 访问）：", e);
   }
-  const isLive = dataSource === 'api'; // 实时 API 模式才显示授权/重新授权入口
 
   // ---------- YouTube 状态横幅 ----------
   const ytBanner = document.getElementById("ytStatusBanner");
@@ -652,12 +638,12 @@ async function initStatus() {
       <img class="yt-avatar" src="${yt.channel.thumb || ""}" alt="">
       <span class="yt-channel-name">${yt.channel.title || "未命名频道"}</span>
       <span class="yt-sub-count">${fmt(yt.channel.subscribers || 0)} 粉丝</span>
-      ${isLive ? `<a href="/auth" class="yt-reauth">退出重新授权</a>` : `<span style="font-size:12px;color:#888">线上快照模式</span>`}`;
+      <a href="/auth" class="yt-reauth">退出重新授权</a>`;
   } else if (yt && !yt.authorized) {
     ytBanner.classList.remove("yt-banner-loading");
     ytBanner.classList.add("yt-banner-unauth");
     ytStatusText.textContent = "⚠️ YouTube 账号未连接";
-    ytRight.innerHTML = isLive ? `<a href="/auth" class="yt-auth-btn">连接 YouTube 账号</a>` : ``;
+    ytRight.innerHTML = `<a href="/auth" class="yt-auth-btn">连接 YouTube 账号</a>`;
   } else {
     ytBanner.classList.remove("yt-banner-loading");
     ytBanner.classList.add("yt-banner-unauth");
@@ -702,12 +688,12 @@ async function initStatus() {
   }
 }
 
-// 2) YouTube Tab 面板：优先拉取 /api/youtube/videos 实时数据，其次 data/youtube.json 定时快照，失败回退示例数据
+// 2) YouTube Tab 面板：优先拉取 /api/youtube/videos 真实数据填充，失败回退示例数据
 async function loadYouTubeData() {
   try {
-    const r = await fetchData("/api/youtube/videos", "./data/youtube.json");
-    if (!r) throw new Error("no data source");
-    const data = r.data;
+    const res = await fetch("/api/youtube/videos");
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
     const ch = data.channel || {};
     const videos = data.videos || [];
     // 更新 YouTube 面板统计卡（rows 顺序：0粉丝 1作品 2播放 3点赞 4评论 5分享 6收藏 7完播率 8互动率）
@@ -771,12 +757,12 @@ function updateOverview() {
   document.getElementById("mAvg").textContent = fmt(Math.round(plays / (works || 1)));
 }
 
-// 2.1) Bilibili Tab 面板：优先拉取 /api/bilibili/videos 实时数据，其次 data/bilibili.json 定时快照，失败回退示例数据
+// 2.1) Bilibili Tab 面板：优先拉取 /api/bilibili/videos 真实数据填充，失败回退示例数据（API 由 yt-server.js 提供）
 async function loadBilibiliData() {
   try {
-    const r = await fetchData("/api/bilibili/videos", "./data/bilibili.json");
-    if (!r) throw new Error("no data source");
-    const data = r.data;
+    const res = await fetch("/api/bilibili/videos");
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
     const ch = data.channel || {};
     const videos = data.videos || [];
     // 更新 Bilibili 面板统计卡（rows 顺序：0粉丝 1作品 2播放 3点赞 4评论 5分享 6收藏 7完播率 8互动率）
@@ -826,9 +812,9 @@ async function fetchYouTubeComments() {
   btn.classList.add("loading");
   btn.textContent = "拉取中...";
   try {
-    const r = await fetchData("/api/youtube/comments", "./data/youtube-comments.json");
-    if (!r) throw new Error("no data source");
-    const data = r.data;
+    const res = await fetch("/api/youtube/comments");
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
     const comments = data.comments || [];
     comments.forEach(c => {
       COMMENTS.push({
@@ -846,7 +832,7 @@ async function fetchYouTubeComments() {
         replyCount: c.replyCount || 0,
         status: "pending",
         reply: "",
-        source: r.source === 'json' ? "youtube-json" : "youtube-api"   // 快照模式标记为 json，回复时提示
+        source: "youtube-api"        // 标记来源：回复时走 YouTube API
       });
     });
     ytCommentsLoaded = true;
@@ -864,7 +850,7 @@ async function fetchYouTubeComments() {
   }
 }
 
-// 3.1) 评论管理：拉取 B 站真实评论并渲染进列表（本地实时 API 逐个视频拉取；线上快照直接读聚合 JSON）
+// 3.1) 评论管理：从 B 站拉取真实评论并渲染进列表（先取前 5 个视频 bvid，再逐视频拉评论合并，API 由 yt-server.js 提供）
 let biliCommentsLoaded = false;
 async function fetchBilibiliComments() {
   const btn = document.getElementById("fetchBiliComments");
@@ -873,45 +859,37 @@ async function fetchBilibiliComments() {
   btn.textContent = "拉取中...";
   let total = 0;
   try {
-    const pushComment = c => {
-      COMMENTS.push({
-        id: c.id,                  // API 返回 id 已带 bili- 前缀，作为唯一标识
-        platform: "bilibili",
-        nick: c.author || "匿名用户",
-        avatar: c.avatar || "",
-        avatarColor: "#00a1d6",
-        content: c.text || "",
-        time: (c.publishedAt || "").replace("T", " ").slice(0, 16),
-        likes: c.likeCount || 0,
-        video: c.videoTitle || "",
-        videoId: c.videoId || "",
-        commentApiId: String(c.id).replace(/^bili-/, ""),  // 去掉前缀的原始 rpid，回复时传给 /api/bilibili/reply
-        replyCount: c.replyCount || 0,
-        status: "pending",
-        reply: "",
-        source: "bilibili-api"    // 标记来源：回复时走 Bilibili API
-      });
-      total++;
-    };
-    const r = await fetchData("/api/bilibili/videos", "./data/bilibili.json");
-    if (!r) throw new Error("no data source");
-    const vData = r.data;
-    if (r.source === 'json') {
-      // 线上快照模式：直接读聚合评论文件（sync-data.js 已抓取前 5 个视频评论）
-      const cRes = await fetch("./data/bilibili-comments.json");
-      if (!cRes.ok) throw new Error("HTTP " + cRes.status);
+    // 第一步：取 UP 主前 5 个视频的 bvid
+    const vRes = await fetch("/api/bilibili/videos");
+    if (!vRes.ok) throw new Error("HTTP " + vRes.status);
+    const vData = await vRes.json();
+    const videos = (vData.videos || []).slice(0, 5);
+    if (!videos.length) throw new Error("no videos");
+    // 第二步：逐个视频拉取真实评论
+    for (const v of videos) {
+      const cRes = await fetch("/api/bilibili/comments?bvid=" + encodeURIComponent(v.id));
+      if (!cRes.ok) continue;
       const cData = await cRes.json();
-      (cData.comments || []).forEach(pushComment);
-    } else {
-      // 本地实时 API：先取前 5 个视频 bvid，再逐个视频拉取
-      const videos = (vData.videos || []).slice(0, 5);
-      if (!videos.length) throw new Error("no videos");
-      for (const v of videos) {
-        const cRes = await fetch("/api/bilibili/comments?bvid=" + encodeURIComponent(v.id));
-        if (!cRes.ok) continue;
-        const cData = await cRes.json();
-        (cData.comments || []).forEach(pushComment);
-      }
+      (cData.comments || []).forEach(c => {
+        COMMENTS.push({
+          id: c.id,                  // API 返回 id 已带 bili- 前缀，作为唯一标识
+          platform: "bilibili",
+          nick: c.author || "匿名用户",
+          avatar: c.avatar || "",
+          avatarColor: "#00a1d6",
+          content: c.text || "",
+          time: (c.publishedAt || "").replace("T", " ").slice(0, 16),
+          likes: c.likeCount || 0,
+          video: c.videoTitle || "",
+          videoId: c.videoId || "",
+          commentApiId: String(c.id).replace(/^bili-/, ""),  // 去掉前缀的原始 rpid，回复时传给 /api/bilibili/reply
+          replyCount: c.replyCount || 0,
+          status: "pending",
+          reply: "",
+          source: "bilibili-api"    // 标记来源：回复时走 Bilibili API
+        });
+        total++;
+      });
     }
     biliCommentsLoaded = true;
     btn.classList.remove("loading");
@@ -924,7 +902,7 @@ async function fetchBilibiliComments() {
     console.warn("[bili] 拉取 Bilibili 评论失败：", e);
     btn.classList.remove("loading");
     btn.textContent = "拉取失败，点击重试";
-    alert("拉取 Bilibili 评论失败，请确认本地服务（http://localhost:8080）已启动或线上数据已同步");
+    alert("拉取 Bilibili 评论失败，请确认已通过 http://localhost:8080 访问且 yt-server.js 已启动");
   }
 }
 

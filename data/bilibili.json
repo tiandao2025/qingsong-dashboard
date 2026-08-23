@@ -1,0 +1,105 @@
+{
+  "channel": {
+    "mid": 3493270613133655,
+    "name": "设计师青松",
+    "face": "https://i1.hdslb.com/bfs/face/3137cc80075c3ab29c1cf73966ee9e24c3f18731.jpg",
+    "sign": "",
+    "followers": 31,
+    "following": 7,
+    "videoCount": 51,
+    "viewCount": 0,
+    "likeCount": 0
+  },
+  "videos": [
+    {
+      "id": "BV18T8t6TEKe",
+      "title": "一盘传三代，你走它还在，零成本打造一辈子也用不完的私有云盘",
+      "publishedAt": "2026-08-23T06:08:48.000Z",
+      "thumb": "http://i2.hdslb.com/bfs/archive/d3ace5a403e13de7433138f89794ea201d61b341.jpg",
+      "views": 35,
+      "likes": 0,
+      "comments": 1
+    },
+    {
+      "id": "BV15L8B6rEb7",
+      "title": "零成本用AI快速搭建网站",
+      "publishedAt": "2026-08-21T16:34:41.000Z",
+      "thumb": "http://i2.hdslb.com/bfs/archive/1cad4839224adb9c6a466f1379636ab364874018.jpg",
+      "views": 35,
+      "likes": 0,
+      "comments": 0
+    },
+    {
+      "id": "BV1Y68N6LEFx",
+      "title": "如何拥有永久免费服务器",
+      "publishedAt": "2026-08-20T18:04:42.000Z",
+      "thumb": "http://i2.hdslb.com/bfs/archive/e4bc143cd7736fb55d8602a4e44caa853d9d6929.jpg",
+      "views": 59,
+      "likes": 0,
+      "comments": 1
+    },
+    {
+      "id": "BV162876fEji",
+      "title": "上海张总雅居",
+      "publishedAt": "2026-08-19T09:48:21.000Z",
+      "thumb": "http://i0.hdslb.com/bfs/archive/7816a0cb7c3167bf39800ebb33ece0a3133551d3.jpg",
+      "views": 32,
+      "likes": 0,
+      "comments": 0
+    },
+    {
+      "id": "BV1NkmfYKEbB",
+      "title": "设计师最新高效率工作流程",
+      "publishedAt": "2024-11-15T13:53:31.000Z",
+      "thumb": "http://i0.hdslb.com/bfs/archive/dfd0790edc56940fc0bbac72488841f3d01b44a1.jpg",
+      "views": 63,
+      "likes": 0,
+      "comments": 0
+    },
+    {
+      "id": "BV15zmdYrESF",
+      "title": "真实弯曲插件",
+      "publishedAt": "2024-11-15T11:42:21.000Z",
+      "thumb": "http://i2.hdslb.com/bfs/archive/c781ec2f0a9e3cd3c6dda0dfbaf7eca184900090.jpg",
+      "views": 34,
+      "likes": 0,
+      "comments": 0
+    },
+    {
+      "id": "BV1ermdYuEK6",
+      "title": "第37节  联合推拉插件",
+      "publishedAt": "2024-11-15T11:40:50.000Z",
+      "thumb": "http://i2.hdslb.com/bfs/archive/683aa3cb0de6581bb4e868867cbc6d85771b0cfd.jpg",
+      "views": 34,
+      "likes": 0,
+      "comments": 0
+    },
+    {
+      "id": "BV1aymdYTErX",
+      "title": "SU快速导出柜体下单图纸",
+      "publishedAt": "2024-11-15T11:40:28.000Z",
+      "thumb": "http://i0.hdslb.com/bfs/archive/30c9b512edf5cbc62f80d4d9542f22dc40a9dd44.jpg",
+      "views": 43,
+      "likes": 0,
+      "comments": 0
+    },
+    {
+      "id": "BV1aymdYTEBc",
+      "title": "解决横型空间卡顿的几种方法",
+      "publishedAt": "2024-11-15T11:39:59.000Z",
+      "thumb": "http://i1.hdslb.com/bfs/archive/c3044db7e628146552a3169f1e76db830b67e3d2.jpg",
+      "views": 10,
+      "likes": 0,
+      "comments": 0
+    },
+    {
+      "id": "BV1ezmdY6ESy",
+      "title": "LAYOUT施工图教程",
+      "publishedAt": "2024-11-15T11:39:47.000Z",
+      "thumb": "http://i1.hdslb.com/bfs/archive/e6834d422d986e333c5eb48f69d388d0642caa3c.jpg",
+      "views": 570,
+      "likes": 0,
+      "comments": 0
+    }
+  ]
+}

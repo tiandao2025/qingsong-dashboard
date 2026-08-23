@@ -1,0 +1,23 @@
+{
+  "updated_at": "2026-08-23T16:24:18.582Z",
+  "youtube": {
+    "authorized": false,
+    "error": "fetch failed"
+  },
+  "bilibili": {
+    "mode": "公开数据（线上定时同步）",
+    "configured": true,
+    "authorized": true,
+    "channel": {
+      "mid": 3493270613133655,
+      "name": "设计师青松",
+      "face": "https://i1.hdslb.com/bfs/face/3137cc80075c3ab29c1cf73966ee9e24c3f18731.jpg",
+      "sign": "",
+      "followers": 31,
+      "following": 7,
+      "videoCount": 51,
+      "viewCount": 0,
+      "likeCount": 0
+    }
+  }
+}
