@@ -1,0 +1,8 @@
+# 敏感配置与凭据，严禁入库
+yt-config.json
+yt-token.json
+.bili-cookies.txt
+
+# 依赖与缓存
+node_modules/
+.wrangler/

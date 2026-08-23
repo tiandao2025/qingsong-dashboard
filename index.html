@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>青松设计短视频多平台数据集合后台</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg-card: #111827;
+    --bg-card-hover: #1a2332;
+    --border: #1f2a3d;
+    --text: #e5e7eb;
+    --text-dim: #9ca3af;
+    --accent: #00d4ff;
+    --accent2: #7c5cff;
+    --green: #34d399;
+    --yellow: #fbbf24;
+    --red: #f87171;
+    --radius: 14px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: radial-gradient(1200px 600px at 80% -10%, rgba(0,212,255,.12), transparent 60%),
+                radial-gradient(900px 500px at 0% 0%, rgba(124,92,255,.14), transparent 55%),
+                var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  .container { max-width: 1440px; margin: 0 auto; padding: 20px 24px 60px; }
+
+  /* Header */
+  .header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 0 6px; }
+  .header h1 { font-size: 24px; font-weight: 700; letter-spacing: .5px; display: flex; align-items: center; }
+  .header h1 span { color: var(--accent); }
+  .header-logo { height: 40px; width: auto; margin-right: 10px; vertical-align: middle; border-radius: 6px; }
+  .notice {
+    background: rgba(0,212,255,.08);
+    border: 1px solid rgba(0,212,255,.3);
+    color: var(--accent);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .sub-bar { display:flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; margin: 14px 0 22px; color: var(--text-dim); font-size: 13px; }
+
+  /* Overview cards */
+  .overview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .metric-card {
+    background: linear-gradient(160deg, var(--bg-card), #0d1522);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .2s, border-color .2s;
+  }
+  .metric-card:hover { transform: translateY(-3px); border-color: rgba(0,212,255,.5); }
+  .metric-card::after {
+    content: "";
+    position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .metric-label { font-size: 13px; color: var(--text-dim); margin-bottom: 8px; }
+  .metric-value { font-size: 30px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .metric-trend { font-size: 12px; margin-top: 8px; }
+  .trend-up { color: var(--green); }
+  .trend-down { color: var(--red); }
+
+  /* Tabs */
+  .platform-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+  .tab-btn {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 18px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all .2s;
+    user-select: none;
+  }
+  .tab-btn:hover { border-color: var(--accent); color: var(--text); }
+  .tab-btn.active { background: linear-gradient(135deg, rgba(0,212,255,.15), rgba(124,92,255,.15)); border-color: var(--accent); color: var(--accent); }
+  .tab-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  .tab-btn.active .tab-dot { box-shadow: 0 0 8px var(--accent); }
+
+  /* Platform panels */
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn .3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .section-title { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 700; margin: 28px 0 14px; }
+  .section-title::before { content: ""; width: 4px; height: 18px; border-radius: 2px; background: linear-gradient(180deg, var(--accent), var(--accent2)); }
+
+  /* Data tables */
+  .data-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
+  .stat-card .k { font-size: 12px; color: var(--text-dim); }
+  .stat-card .v { font-size: 24px; font-weight: 700; margin-top: 6px; font-variant-numeric: tabular-nums; }
+  .stat-card .d { font-size: 12px; margin-top: 4px; color: var(--green); }
+  .table-wrap { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow-x: auto; margin-top: 16px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 640px; }
+  th, td { padding: 12px 16px; text-align: left; white-space: nowrap; }
+  th { background: #0d1522; color: var(--text-dim); font-size: 12px; letter-spacing: .5px; }
+  td { border-top: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+  tr:hover td { background: rgba(0,212,255,.04); }
+  .trend-tag { padding: 2px 8px; border-radius: 6px; font-size: 12px; }
+  .trend-tag.up { background: rgba(52,211,153,.12); color: var(--green); }
+  .trend-tag.down { background: rgba(248,113,113,.12); color: var(--red); }
+
+  /* Charts */
+  .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; }
+  .chart-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
+  .chart-card h3 { font-size: 14px; color: var(--text-dim); margin-bottom: 14px; font-weight: 600; }
+  .chart-box { position: relative; height: 260px; }
+
+  .footer { margin-top: 40px; text-align: center; color: var(--text-dim); font-size: 12px; border-top: 1px solid var(--border); padding-top: 20px; }
+
+  /* ===== 评论管理 ===== */
+  .comments-toolbar { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .filter-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .filter-btn { padding: 8px 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; color: var(--text-dim); cursor: pointer; font-size: 13px; font-weight: 600; transition: all .2s; user-select: none; }
+  .filter-btn:hover { border-color: var(--accent); color: var(--text); }
+  .filter-btn.active { background: linear-gradient(135deg, rgba(0,212,255,.15), rgba(124,92,255,.15)); border-color: var(--accent); color: var(--accent); }
+  .toggle-wrap { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-dim); cursor: pointer; user-select: none; }
+  .toggle-wrap input { display: none; }
+  .toggle-slider { width: 40px; height: 22px; border-radius: 11px; background: #2a3650; position: relative; transition: background .2s; flex-shrink: 0; }
+  .toggle-slider::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #9ca3af; transition: all .2s; }
+  .toggle-wrap input:checked + .toggle-slider { background: rgba(0,212,255,.4); }
+  .toggle-wrap input:checked + .toggle-slider::after { left: 21px; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+  .comment-card { display: flex; gap: 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 12px; transition: border-color .2s; }
+  .comment-card:hover { border-color: rgba(0,212,255,.35); }
+  .comment-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #0a0e1a; flex-shrink: 0; }
+  .comment-body { flex: 1; min-width: 0; }
+  .comment-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .comment-nick { font-weight: 700; font-size: 14px; }
+  .platform-badge { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
+  .comment-time { font-size: 12px; color: var(--text-dim); }
+  .comment-video { font-size: 12px; color: var(--text-dim); margin-top: 3px; }
+  .comment-content { font-size: 14px; line-height: 1.6; margin: 8px 0; color: var(--text); }
+  .comment-meta { display: flex; align-items: center; gap: 14px; font-size: 12px; color: var(--text-dim); }
+  .reply-btn { padding: 5px 14px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--accent); cursor: pointer; font-size: 12px; font-weight: 600; transition: all .2s; }
+  .reply-btn:hover { background: rgba(0,212,255,.1); border-color: var(--accent); }
+  .reply-box { margin-top: 10px; display: flex; gap: 10px; align-items: flex-start; }
+  .reply-box input { flex: 1; background: #0d1522; border: 1px solid var(--border); border-radius: 8px; padding: 9px 12px; color: var(--text); font-size: 13px; outline: none; min-width: 0; }
+  .reply-box input:focus { border-color: var(--accent); }
+  .reply-send { padding: 8px 18px; border-radius: 8px; border: none; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #0a0e1a; font-weight: 700; cursor: pointer; font-size: 13px; flex-shrink: 0; }
+  .reply-send:hover { filter: brightness(1.1); }
+  .reply-cancel { padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-dim); cursor: pointer; font-size: 13px; flex-shrink: 0; }
+  .reply-cancel:hover { color: var(--text); border-color: var(--text-dim); }
+  .replied-block { margin-top: 10px; background: rgba(0,212,255,.06); border: 1px solid rgba(0,212,255,.25); border-radius: 10px; padding: 10px 14px; font-size: 13px; line-height: 1.5; }
+  .replied-label { color: var(--accent); font-weight: 700; margin-right: 6px; }
+  .comment-empty { text-align: center; color: var(--text-dim); padding: 60px 0; font-size: 14px; }
+
+  /* ===== YouTube 接入（API 由 yt-server.js 提供） ===== */
+  .yt-banner-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; margin: 14px 0 4px; }
+  .yt-banner { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; padding: 12px 18px; border-radius: 12px; margin: 0; border: 1px solid var(--border); background: var(--bg-card); font-size: 13px; transition: border-color .2s; }
+  .yt-banner-ok { border-color: rgba(0,212,255,.4); background: rgba(0,212,255,.06); }
+  .yt-banner-unauth { border-color: rgba(251,191,36,.4); background: rgba(251,191,36,.06); }
+  .yt-banner-left { display: flex; align-items: center; gap: 8px; }
+  .yt-status-icon { font-size: 15px; }
+  .yt-banner-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .yt-avatar { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border); object-fit: cover; }
+  .yt-channel-name { font-weight: 700; color: var(--text); }
+  .yt-sub-count { color: var(--text-dim); }
+  .yt-auth-btn { padding: 8px 18px; border-radius: 8px; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #0a0e1a; font-weight: 700; text-decoration: none; font-size: 13px; }
+  .yt-auth-btn:hover { filter: brightness(1.1); }
+  .yt-reauth { color: var(--text-dim); font-size: 12px; text-decoration: underline; }
+  .yt-reauth:hover { color: var(--accent); }
+  .yt-fetch-btn { padding: 8px 14px; border-radius: 10px; background: rgba(0,212,255,.08); border: 1px solid rgba(0,212,255,.4); color: var(--accent); cursor: pointer; font-size: 13px; font-weight: 600; transition: all .2s; user-select: none; }
+  .yt-fetch-btn:hover { background: rgba(0,212,255,.16); }
+  .yt-fetch-btn.loading { opacity: .6; pointer-events: none; }
+  .yt-video-section { margin-top: 22px; }
+  .yt-video-note { font-size: 12px; color: var(--text-dim); margin-top: 6px; }
+  .comment-card img.comment-avatar { object-fit: cover; }
+
+  @media (max-width: 768px) {
+    .container { padding: 14px 14px 40px; }
+    .metric-value { font-size: 24px; }
+    .notice { white-space: normal; }
+    .header h1 { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header：左上角品牌 LOGO（图片已复制到本站目录 LOGO.png） -->
+  <div class="header">
+    <h1><img src="LOGO.png" alt="青松设计" class="header-logo"><span>短视频多平台数据集合后台</span></h1>
+    <div class="notice">⚠️ 数据为示例，可接入各平台 API 或手动更新</div>
+  </div>
+
+  <!-- 平台接入状态横幅（API 由 yt-server.js 提供，需通过 http://localhost:8080 访问） -->
+  <div class="yt-banner-row">
+    <div class="yt-banner yt-banner-loading" id="ytStatusBanner">
+      <div class="yt-banner-left">
+        <span class="yt-status-icon">⟳</span>
+        <span id="ytStatusText">正在检测 YouTube 接入状态...</span>
+      </div>
+      <div class="yt-banner-right" id="ytBannerRight"></div>
+    </div>
+    <div class="yt-banner yt-banner-loading" id="biliStatusBanner">
+      <div class="yt-banner-left">
+        <span class="yt-status-icon">⟳</span>
+        <span id="biliStatusText">正在检测 Bilibili 接入状态...</span>
+      </div>
+      <div class="yt-banner-right" id="biliBannerRight"></div>
+    </div>
+  </div>
+
+  <div class="sub-bar">
+    <span>数据统计周期：近 30 天（示例）</span>
+    <span>更新时间：2026-08-23 09:30</span>
+  </div>
+
+  <!-- Overview dashboard -->
+  <div class="section-title">全局总览</div>
+  <div class="overview-grid">
+    <div class="metric-card"><div class="metric-label">粉丝总数</div><div class="metric-value" id="mFans">--</div><div class="metric-trend trend-up">▲ +5.8% 较上周期</div></div>
+    <div class="metric-card"><div class="metric-label">作品总数</div><div class="metric-value" id="mWorks">--</div><div class="metric-trend">六平台累计发布</div></div>
+    <div class="metric-card"><div class="metric-label">总播放量</div><div class="metric-value" id="mPlays">--</div><div class="metric-trend trend-up">▲ +12.3% 较上周期</div></div>
+    <div class="metric-card"><div class="metric-label">总互动量</div><div class="metric-value" id="mInteractions">--</div><div class="metric-trend trend-up">▲ 点赞/评论/分享/收藏</div></div>
+    <div class="metric-card"><div class="metric-label">总分享数</div><div class="metric-value" id="mShares">--</div><div class="metric-trend trend-up">▲ +9.1% 较上周期</div></div>
+    <div class="metric-card"><div class="metric-label">平均播放/作品</div><div class="metric-value" id="mAvg">--</div><div class="metric-trend trend-up">▲ +6.7% 较上周期</div></div>
+  </div>
+
+  <!-- Platform tabs -->
+  <div class="platform-tabs" id="platformTabs"></div>
+
+  <!-- Platform panels -->
+  <div id="platformPanels"></div>
+
+  <!-- Comments panel -->
+  <div id="commentsPanel" class="panel">
+    <div class="comments-toolbar">
+      <div class="filter-group" id="commentFilter">
+        <button class="filter-btn active" data-p="all">全部</button>
+        <button class="filter-btn" data-p="youtube">YouTube</button>
+        <button class="filter-btn" data-p="douyin">抖音</button>
+        <button class="filter-btn" data-p="xiaohongshu">小红书</button>
+        <button class="filter-btn" data-p="kuaishou">快手</button>
+        <button class="filter-btn" data-p="weixin">微信视频号</button>
+        <button class="filter-btn" data-p="bilibili">Bilibili</button>
+        <button class="yt-fetch-btn" id="fetchYTComments">↻ 从 YouTube 拉取真实评论</button>
+        <button class="yt-fetch-btn" id="fetchBiliComments" style="border-color:rgba(0,174,236,.4);color:#00aeec">↻ 从 B站拉取真实评论</button>
+      </div>
+      <label class="toggle-wrap">
+        <input type="checkbox" id="onlyPending">
+        <span class="toggle-slider"></span>
+        只看待回复
+      </label>
+    </div>
+    <div id="commentsList"></div>
+  </div>
+
+  <!-- Audience profile -->
+  <div class="section-title">用户画像</div>
+  <div class="charts-grid">
+    <div class="chart-card"><h3>粉丝年龄分布</h3><div class="chart-box"><canvas id="chartAge"></canvas></div></div>
+    <div class="chart-card"><h3>性别比例</h3><div class="chart-box"><canvas id="chartGender"></canvas></div></div>
+    <div class="chart-card"><h3>地域分布 Top8</h3><div class="chart-box"><canvas id="chartRegion"></canvas></div></div>
+    <div class="chart-card"><h3>粉丝活跃时段</h3><div class="chart-box"><canvas id="chartActive"></canvas></div></div>
+  </div>
+
+  <!-- Platform contribution table -->
+  <div class="section-title">平台贡献对比</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>平台</th><th>粉丝数</th><th>作品数</th><th>播放量</th><th>点赞</th><th>评论</th><th>分享</th><th>收藏</th><th>互动率</th></tr></thead>
+      <tbody id="compareBody"></tbody>
+    </table>
+  </div>
+
+  <div class="footer">青松设计短视频多平台数据集合后台 · 示例数据仅用于演示 · Powered by Chart.js</div>
+</div>
+
+<script>
+/* ================== 示例数据 ================== */
+const PLATFORMS = [
+  {
+    id: "youtube", name: "YouTube", color: "#ff4e45", dot: "#ff4e45",
+    fans: 128000, works: 96, plays: 8640000, likes: 320000, comments: 24000, shares: 42000, collects: 56000,
+    trends: [ {label:"粉丝数", v:"+4.2%"}, {label:"播放量", v:"+8.9%"}, {label:"互动率", v:"+1.2pt"} ],
+    rows: [
+      ["频道订阅者", "128,000", "+4.2%"], ["视频总数", "96", "+6"], ["总播放量", "8,640,000", "+8.9%"],
+      ["总点赞", "320,000", "+5.1%"], ["总评论", "24,000", "+12.4%"], ["总分享", "42,000", "+7.8%"], ["总收藏", "56,000", "+3.5%"],
+      ["平均播放时长", "4分32秒", "+0.8%"], ["平均互动率", "4.9%", "+1.2pt"]
+    ]
+  },
+  {
+    id: "douyin", name: "抖音", color: "#fe2c55", dot: "#fe2c55",
+    fans: 356000, works: 152, plays: 12600000, likes: 580000, comments: 68000, shares: 96000, collects: 145000,
+    trends: [ {label:"粉丝数", v:"+6.5%"}, {label:"播放量", v:"+15.2%"}, {label:"互动率", v:"+0.9pt"} ],
+    rows: [
+      ["粉丝数", "356,000", "+6.5%"], ["作品数", "152", "+9"], ["总播放量", "12,600,000", "+15.2%"],
+      ["总点赞", "580,000", "+8.3%"], ["总评论", "68,000", "+18.6%"], ["总分享", "96,000", "+11.2%"], ["总收藏", "145,000", "+7.4%"],
+      ["平均完播率", "38.5%", "+2.1pt"], ["平均互动率", "6.7%", "+0.9pt"]
+    ]
+  },
+  {
+    id: "xiaohongshu", name: "小红书", color: "#ff2442", dot: "#ff2442",
+    fans: 89200, works: 118, plays: 2160000, likes: 98000, comments: 15200, shares: 12800, collects: 234000,
+    trends: [ {label:"粉丝数", v:"+3.8%"}, {label:"播放量", v:"+7.1%"}, {label:"互动率", v:"+0.4pt"} ],
+    rows: [
+      ["粉丝数", "89,200", "+3.8%"], ["笔记数", "118", "+5"], ["总浏览", "2,160,000", "+7.1%"],
+      ["总点赞", "98,000", "+4.5%"], ["总评论", "15,200", "+9.2%"], ["总分享", "12,800", "+3.0%"], ["总收藏", "234,000", "+6.8%"],
+      ["平均阅读时长", "2分58秒", "+1.1%"], ["平均互动率", "5.4%", "+0.4pt"]
+    ]
+  },
+  {
+    id: "kuaishou", name: "快手", color: "#ff7b2e", dot: "#ff7b2e",
+    fans: 65400, works: 84, plays: 1750000, likes: 61000, comments: 9200, shares: 7800, collects: 21500,
+    trends: [ {label:"粉丝数", v:"+2.9%"}, {label:"播放量", v:"+5.6%"}, {label:"互动率", v:"+0.3pt"} ],
+    rows: [
+      ["粉丝数", "65,400", "+2.9%"], ["作品数", "84", "+4"], ["总播放量", "1,750,000", "+5.6%"],
+      ["总点赞", "61,000", "+3.7%"], ["总评论", "9,200", "+7.5%"], ["总分享", "7,800", "+2.2%"], ["总收藏", "21,500", "+4.0%"],
+      ["平均完播率", "41.2%", "+1.5pt"], ["平均互动率", "4.4%", "+0.3pt"]
+    ]
+  },
+  {
+    id: "weixin", name: "微信视频号", color: "#07c160", dot: "#07c160",
+    fans: 156000, works: 132, plays: 4680000, likes: 210000, comments: 31000, shares: 88000, collects: 72000,
+    trends: [ {label:"粉丝数", v:"+7.2%"}, {label:"播放量", v:"+11.8%"}, {label:"互动率", v:"+1.6pt"} ],
+    rows: [
+      ["粉丝数", "156,000", "+7.2%"], ["作品数", "132", "+8"], ["总播放量", "4,680,000", "+11.8%"],
+      ["总点赞", "210,000", "+9.6%"], ["总评论", "31,000", "+14.2%"], ["总分享", "88,000", "+16.5%"], ["总收藏", "72,000", "+5.9%"],
+      ["平均完播率", "35.9%", "+1.1pt"], ["平均互动率", "6.2%", "+1.6pt"]
+    ]
+  },
+  {
+    id: "bilibili", name: "Bilibili", color: "#00a1d6", dot: "#00a1d6",
+    fans: 47800, works: 64, plays: 1320000, likes: 76000, comments: 8800, shares: 5200, collects: 41000,
+    trends: [ {label:"粉丝数", v:"+5.4%"}, {label:"播放量", v:"+9.7%"}, {label:"互动率", v:"+0.7pt"} ],
+    rows: [
+      ["粉丝数", "47,800", "+5.4%"], ["视频数", "64", "+3"], ["总播放量", "1,320,000", "+9.7%"],
+      ["总点赞", "76,000", "+6.2%"], ["总评论", "8,800", "+11.3%"], ["总分享", "5,200", "+4.5%"], ["总收藏", "41,000", "+8.1%"],
+      ["平均完播率", "45.3%", "+2.4pt"], ["平均互动率", "6.9%", "+0.7pt"]
+    ]
+  }
+];
+
+/* ================== 工具函数 ================== */
+function fmt(n) {
+  if (n >= 100000000) return (n/100000000).toFixed(1) + " 亿";
+  if (n >= 10000) return (n/10000).toFixed(1) + " 万";
+  return n.toLocaleString("zh-CN");
+}
+function fmtFull(n) { return n.toLocaleString("zh-CN"); }
+
+/* ================== 全局总览 ================== */
+const total = {
+  fans: 0, works: 0, plays: 0, likes: 0, comments: 0, shares: 0, collects: 0
+};
+PLATFORMS.forEach(p => {
+  total.fans += p.fans;
+  total.works += p.works;
+  total.plays += p.plays;
+  total.likes += p.likes;
+  total.comments += p.comments;
+  total.shares += p.shares;
+  total.collects += p.collects;
+});
+const interactions = total.likes + total.comments + total.shares + total.collects;
+document.getElementById("mFans").textContent = fmt(total.fans);
+document.getElementById("mWorks").textContent = fmt(total.works);
+document.getElementById("mPlays").textContent = fmt(total.plays);
+document.getElementById("mInteractions").textContent = fmt(interactions);
+document.getElementById("mShares").textContent = fmt(total.shares);
+document.getElementById("mAvg").textContent = fmt(Math.round(total.plays / total.works));
+
+/* ================== Tabs & Panels ================== */
+const tabsEl = document.getElementById("platformTabs");
+const panelsEl = document.getElementById("platformPanels");
+
+PLATFORMS.forEach((p, idx) => {
+  const btn = document.createElement("div");
+  btn.className = "tab-btn" + (idx === 0 ? " active" : "");
+  btn.innerHTML = `<span class="tab-dot" style="background:${p.dot};box-shadow:0 0 6px ${p.dot}"></span>${p.name}`;
+  btn.onclick = () => switchTab(idx);
+  tabsEl.appendChild(btn);
+
+  // YouTube / Bilibili 面板统计卡使用带前缀 id，便于真实数据填充
+  const statPrefix = p.id === "youtube" ? "yt-stat-" : (p.id === "bilibili" ? "bili-stat-" : "");
+  const statCards = p.rows.map((r, ri) => `
+    <div class="stat-card">
+      <div class="k">${r[0]}</div>
+      <div class="v" id="${statPrefix + ri}">${r[1]}</div>
+      <div class="d">${r[2]}</div>
+    </div>`).join("");
+
+  const trendChips = p.trends.map(t => `<span class="trend-tag up" style="margin-right:8px">${t.label} ${t.v}</span>`).join("");
+
+  // YouTube / Bilibili 面板追加真实视频列表容器（API 由 yt-server.js 提供）
+  const isLivePlatform = p.id === "youtube" || p.id === "bilibili";
+  const liveVideoSection = isLivePlatform ? `
+    <div class="yt-video-section" id="${p.id === "youtube" ? "ytVideoSection" : "biliVideoSection"}" style="display:none">
+      <div class="section-title">${p.name} 视频列表（真实数据）</div>
+      <div class="table-wrap yt-video-table">
+        <table>
+          <thead><tr><th>视频标题</th><th>发布时间</th><th>播放量</th><th>点赞</th><th>评论</th></tr></thead>
+          <tbody id="${p.id === "youtube" ? "ytVideoList" : "biliVideoList"}"></tbody>
+        </table>
+      </div>
+      <div class="yt-video-note">数据来自 /api/${p.id}/videos（由 yt-server.js 提供）</div>
+    </div>` : "";
+
+  const panel = document.createElement("div");
+  panel.className = "panel" + (idx === 0 ? " active" : "");
+  panel.id = "panel-" + p.id;
+  panel.innerHTML = `
+    <div class="data-grid" style="margin-bottom:8px">
+      <div class="stat-card" style="grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <div style="font-size:16px;font-weight:700;color:${p.color}">${p.name} · 近 30 天概览</div>
+        <div>${trendChips}</div>
+      </div>
+      ${statCards}
+    </div>
+    ${liveVideoSection}`;
+  panelsEl.appendChild(panel);
+});
+
+// 追加"评论管理"Tab
+const commentTab = document.createElement("div");
+commentTab.className = "tab-btn";
+commentTab.id = "tabComments";
+commentTab.innerHTML = `<span class="tab-dot" style="background:#fbbf24;box-shadow:0 0 6px #fbbf24"></span>💬 评论管理`;
+commentTab.onclick = () => switchTab(PLATFORMS.length);
+tabsEl.appendChild(commentTab);
+
+function switchTab(idx) {
+  document.querySelectorAll(".tab-btn").forEach((el, i) => el.classList.toggle("active", i === idx));
+  const isComments = idx === PLATFORMS.length;
+  document.querySelectorAll("#platformPanels .panel").forEach((el, i) => el.classList.toggle("active", i === idx));
+  document.getElementById("commentsPanel").classList.toggle("active", isComments);
+}
+
+/* ================== 平台贡献对比表 ================== */
+const compareBody = document.getElementById("compareBody");
+PLATFORMS.forEach(p => {
+  const rate = ((p.likes + p.comments + p.shares + p.collects) / p.plays * 100).toFixed(1);
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td style="font-weight:600"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${p.color};margin-right:8px"></span>${p.name}</td>
+    <td>${fmtFull(p.fans)}</td>
+    <td>${fmtFull(p.works)}</td>
+    <td>${fmtFull(p.plays)}</td>
+    <td>${fmtFull(p.likes)}</td>
+    <td>${fmtFull(p.comments)}</td>
+    <td>${fmtFull(p.shares)}</td>
+    <td>${fmtFull(p.collects)}</td>
+    <td style="color:var(--accent);font-weight:700">${rate}%</td>`;
+  compareBody.appendChild(tr);
+});
+
+/* ================== 评论管理 ================== */
+// 评论数据为示例，接入真实平台 API 后替换
+const COMMENTS = [
+  { id: 1,  platform: "youtube",     nick: "VideoFan_88",      avatarColor: "#ff4e45", content: "这个视频的剪辑节奏太舒服了，一口气看完！", time: "2026-08-22 20:14", likes: 236, video: "【干货】3个技巧让你的短视频播放量翻倍", status: "pending", reply: "" },
+  { id: 2,  platform: "youtube",     nick: "Sarah Chen",       avatarColor: "#00d4ff", content: "请问用的什么剪辑软件呀？求分享", time: "2026-08-21 09:32", likes: 18,  video: "Vlog 一日工作记录", status: "replied", reply: "谢谢支持！用的是剪映专业版，后续会出详细教程~" },
+  { id: 3,  platform: "douyin",      nick: "爱吃火锅的小鹿",  avatarColor: "#fe2c55", content: "太有共鸣了，已转发给闺蜜！", time: "2026-08-22 22:05", likes: 892, video: "独居女孩的周末治愈日常", status: "pending", reply: "" },
+  { id: 4,  platform: "douyin",      nick: "阿凯同学",         avatarColor: "#7c5cff", content: "这个运镜是怎么拍的？求教程", time: "2026-08-20 14:47", likes: 56,  video: "城市夜景延时摄影合集", status: "pending", reply: "" },
+  { id: 5,  platform: "xiaohongshu", nick: "柚子茶不加糖",     avatarColor: "#ff2442", content: "种草了！求链接～", time: "2026-08-22 19:26", likes: 341, video: "小众香薰蜡烛开箱测评", status: "replied", reply: "已经私信你链接啦，记得查收~" },
+  { id: 6,  platform: "xiaohongshu", nick: "一颗奶糖",         avatarColor: "#34d399", content: "收藏了，周末就去打卡！", time: "2026-08-19 11:03", likes: 76,  video: "上海小众咖啡馆探店地图", status: "pending", reply: "" },
+  { id: 7,  platform: "kuaishou",    nick: "东北老铁666",     avatarColor: "#ff7b2e", content: "老铁这视频绝了，必须支持！", time: "2026-08-21 18:42", likes: 128, video: "农村美食：柴火炖大鹅", status: "pending", reply: "" },
+  { id: 8,  platform: "kuaishou",    nick: "乡村小芳",         avatarColor: "#fbbf24", content: "看着太香了，馋哭了哈哈", time: "2026-08-18 12:20", likes: 45,  video: "农村美食：柴火炖大鹅", status: "replied", reply: "哈哈下次来村里请你吃正宗的！" },
+  { id: 9,  platform: "weixin",      nick: "王大爷的快乐生活", avatarColor: "#07c160", content: "讲得太好了，学到了！", time: "2026-08-22 08:55", likes: 67,  video: "中老年健康养生小课堂", status: "pending", reply: "" },
+  { id: 10, platform: "weixin",      nick: "Lily 妈妈",        avatarColor: "#ff6b9d", content: "孩子看完很有收获，感谢分享", time: "2026-08-17 21:30", likes: 93,  video: "亲子沟通的三个黄金法则", status: "replied", reply: "感谢支持，后续会更新更多育儿内容~" },
+  { id: 11, platform: "bilibili",    nick: "弹幕战神",         avatarColor: "#00a1d6", content: "三连了，投币支持！", time: "2026-08-22 23:18", likes: 452, video: "【硬核科普】AI 是如何改变视频创作的", status: "pending", reply: "" },
+  { id: 12, platform: "bilibili",    nick: "二次元の小透明",   avatarColor: "#9ca3af", content: "UP主什么时候出下一期？蹲一个", time: "2026-08-16 16:09", likes: 38,  video: "【硬核科普】AI 是如何改变视频创作的", status: "pending", reply: "" }
+];
+
+let commentFilter = "all";
+let onlyPending = false;
+
+function getPlatformName(id) { const p = PLATFORMS.find(x => x.id === id); return p ? p.name : id; }
+function getPlatformColor(id) { const p = PLATFORMS.find(x => x.id === id); return p ? p.color : "#9ca3af"; }
+
+function buildCommentCard(c) {
+  const pc = getPlatformColor(c.platform);
+  const statusTag = c.status === "pending"
+    ? '<span class="trend-tag" style="background:rgba(251,191,36,.12);color:var(--yellow)">待回复</span>'
+    : '<span class="trend-tag up">已回复</span>';
+  const repliedHtml = c.status === "replied"
+    ? `<div class="replied-block"><span class="replied-label">已回复：</span>${c.reply}</div>` : "";
+  const btnLabel = c.status === "replied" ? "修改回复" : "回复";
+  const avatarHtml = c.avatar
+    ? `<img class="comment-avatar" src="${c.avatar}" alt="">`
+    : `<div class="comment-avatar" style="background:${c.avatarColor}">${c.nick.charAt(0)}</div>`;
+  const replyCountHtml = c.replyCount > 0 ? `<span>💬 已有 ${c.replyCount} 条回复</span>` : "";
+  // 方案A：B站公开数据模式不支持回复评论，隐藏回复按钮
+  const replyActionHtml = c.source === "bilibili-api"
+    ? `<span class="bili-no-reply" style="font-size:12px;color:#888">公开模式不可回复</span>`
+    : `<button class="reply-btn" data-id="${c.id}">${btnLabel}</button>`;
+  return `
+    <div class="comment-card" id="cc-${c.id}">
+      ${avatarHtml}
+      <div class="comment-body">
+        <div class="comment-head">
+          <span class="comment-nick">${c.nick}</span>
+          <span class="platform-badge" style="color:${pc};background:${pc}22;border:1px solid ${pc}55">${getPlatformName(c.platform)}</span>
+          ${statusTag}
+          <span class="comment-time">🕐 ${c.time}</span>
+        </div>
+        <div class="comment-video">📺 ${c.video}</div>
+        <div class="comment-content">${c.content}</div>
+        <div class="comment-meta">
+          <span>👍 ${c.likes.toLocaleString("zh-CN")}</span>
+          ${replyCountHtml}
+          ${replyActionHtml}
+        </div>
+        ${c.source === "bilibili-api" ? "" : `<div class="reply-box" id="rb-${c.id}" style="display:none">
+          <input type="text" id="ri-${c.id}" placeholder="输入回复内容..." maxlength="200">
+          <button class="reply-send" data-id="${c.id}">发送</button>
+          <button class="reply-cancel" data-id="${c.id}">取消</button>
+        </div>`}
+        ${repliedHtml}
+      </div>
+    </div>`;
+}
+
+function renderComments() {
+  const list = document.getElementById("commentsList");
+  const items = COMMENTS.filter(c => {
+    const okP = commentFilter === "all" || c.platform === commentFilter;
+    const okR = !onlyPending || c.status === "pending";
+    return okP && okR;
+  });
+  if (!items.length) {
+    list.innerHTML = '<div class="comment-empty">暂无符合条件的评论</div>';
+    return;
+  }
+  list.innerHTML = items.map(buildCommentCard).join("");
+  document.querySelectorAll(".reply-btn").forEach(btn => {
+    btn.onclick = () => toggleReplyBox(btn.dataset.id);
+  });
+  document.querySelectorAll(".reply-send").forEach(btn => {
+    btn.onclick = () => sendReply(btn.dataset.id);
+  });
+  document.querySelectorAll(".reply-cancel").forEach(btn => {
+    btn.onclick = () => toggleReplyBox(btn.dataset.id, true);
+  });
+}
+
+function toggleReplyBox(id, forceHide) {
+  const box = document.getElementById("rb-" + id);
+  if (!box) return;
+  document.querySelectorAll(".reply-box").forEach(b => b.style.display = "none");
+  if (!forceHide && box.style.display === "none") {
+    box.style.display = "flex";
+    const input = document.getElementById("ri-" + id);
+    if (input) input.focus();
+  }
+}
+
+async function sendReply(id) {
+  const input = document.getElementById("ri-" + id);
+  const text = input.value.trim();
+  if (!text) { input.focus(); return; }
+  const c = COMMENTS.find(x => String(x.id) === String(id));
+  if (!c) return;
+  if (c.source === "youtube-api") {
+    // YouTube 真实评论：通过 yt-server.js 调用 POST /api/youtube/reply 发布回复
+    try {
+      const res = await fetch("/api/youtube/reply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text, videoId: c.videoId, commentId: c.commentApiId })
+      });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const data = await res.json();
+      if (!data.ok) throw new Error("API returned not ok");
+      c.status = "replied";
+      c.reply = text;
+      renderComments();
+    } catch (e) {
+      console.warn("[yt] 回复发布失败：", e);
+      alert("回复发送失败，请确认已通过 http://localhost:8080 访问且 yt-server.js 已启动");
+    }
+  } else if (c.source === "bilibili-api") {
+    // 方案A：B站公开数据模式不支持回复评论
+    alert("当前为 B站公开数据模式（方案A），不支持回复评论。如需回复功能，请升级为企业认证（方案B）或 Cookie 登录态（方案C）");
+  } else {
+    c.status = "replied";
+    c.reply = text;
+    renderComments();
+  }
+}
+
+// 平台筛选
+document.querySelectorAll("#commentFilter .filter-btn").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll("#commentFilter .filter-btn").forEach(b => b.classList.toggle("active", b === btn));
+    commentFilter = btn.dataset.p;
+    renderComments();
+  };
+});
+
+// 只看待回复开关
+document.getElementById("onlyPending").addEventListener("change", e => {
+  onlyPending = e.target.checked;
+  renderComments();
+});
+
+// 初始化渲染评论
+renderComments();
+
+/* ================== YouTube 真实数据接入（API 由 yt-server.js 提供，需通过 http://localhost:8080 访问） ================== */
+
+// 1) 页面顶部接入状态横幅：页面加载时 fetch('/api/status')
+// /api/status 新结构：{ youtube:{authorized,channel?}, bilibili:{configured,authorized,channel?,error?} }（API 由 yt-server.js 提供）
+async function initStatus() {
+  let data = null;
+  try {
+    const res = await fetch("/api/status");
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    data = await res.json();
+  } catch (e) {
+    console.warn("[api] 接入状态检测失败（请通过 http://localhost:8080 访问）：", e);
+  }
+
+  // ---------- YouTube 状态横幅 ----------
+  const ytBanner = document.getElementById("ytStatusBanner");
+  const ytStatusText = document.getElementById("ytStatusText");
+  const ytRight = document.getElementById("ytBannerRight");
+  const yt = data && data.youtube;
+  if (yt && yt.authorized && yt.channel) {
+    ytBanner.classList.remove("yt-banner-loading");
+    ytBanner.classList.add("yt-banner-ok");
+    ytStatusText.textContent = "✅ YouTube 已接入";
+    ytRight.innerHTML = `
+      <img class="yt-avatar" src="${yt.channel.thumb || ""}" alt="">
+      <span class="yt-channel-name">${yt.channel.title || "未命名频道"}</span>
+      <span class="yt-sub-count">${fmt(yt.channel.subscribers || 0)} 粉丝</span>
+      <a href="/auth" class="yt-reauth">退出重新授权</a>`;
+  } else if (yt && !yt.authorized) {
+    ytBanner.classList.remove("yt-banner-loading");
+    ytBanner.classList.add("yt-banner-unauth");
+    ytStatusText.textContent = "⚠️ YouTube 账号未连接";
+    ytRight.innerHTML = `<a href="/auth" class="yt-auth-btn">连接 YouTube 账号</a>`;
+  } else {
+    ytBanner.classList.remove("yt-banner-loading");
+    ytBanner.classList.add("yt-banner-unauth");
+    ytStatusText.textContent = "⚠️ YouTube 接入服务未启动（需通过 http://localhost:8080 访问）";
+    ytRight.innerHTML = "";
+  }
+
+  // ---------- Bilibili 状态横幅（公开数据模式，API 由 yt-server.js 提供） ----------
+  const biliBanner = document.getElementById("biliStatusBanner");
+  const biliStatusText = document.getElementById("biliStatusText");
+  const biliRight = document.getElementById("biliBannerRight");
+  const bili = data && data.bilibili;
+  if (!bili) {
+    biliBanner.classList.remove("yt-banner-loading");
+    biliBanner.classList.add("yt-banner-unauth");
+    biliStatusText.textContent = "⚠️ Bilibili 接入服务未启动（需通过 http://localhost:8080 访问）";
+    biliRight.innerHTML = "";
+  } else if (!bili.configured) {
+    biliBanner.classList.remove("yt-banner-loading");
+    biliBanner.classList.add("yt-banner-unauth");
+    biliStatusText.textContent = "⚠️ B站 UID 未配置（请在 yt-config.json 填写 bilibili_uid）";
+    biliRight.innerHTML = "";
+  } else if (!bili.authorized) {
+    biliBanner.classList.remove("yt-banner-loading");
+    biliBanner.classList.add("yt-banner-unauth");
+    biliStatusText.textContent = "⚠️ Bilibili 数据获取失败" + (bili.error ? "：" + bili.error : "");
+    biliRight.innerHTML = "";
+  } else if (bili.authorized && bili.channel) {
+    biliBanner.classList.remove("yt-banner-loading");
+    biliBanner.classList.add("yt-banner-ok");
+    biliStatusText.textContent = "✅ Bilibili 公开数据已接入（方案A）";
+    biliRight.innerHTML = `
+      <img class="yt-avatar" src="${bili.channel.face || ""}" alt="">
+      <span class="yt-channel-name">${bili.channel.name || "未命名UP主"}</span>
+      <span class="yt-sub-count">${fmt(bili.channel.followers || 0)} 粉丝</span>
+      <span style="font-size:12px;color:#888">公开模式 · 不支持回复评论</span>`;
+  } else {
+    biliBanner.classList.remove("yt-banner-loading");
+    biliBanner.classList.add("yt-banner-unauth");
+    biliStatusText.textContent = "⚠️ Bilibili 接入状态异常" + (bili.error ? "：" + bili.error : "");
+    biliRight.innerHTML = "";
+  }
+}
+
+// 2) YouTube Tab 面板：优先拉取 /api/youtube/videos 真实数据填充，失败回退示例数据
+async function loadYouTubeData() {
+  try {
+    const res = await fetch("/api/youtube/videos");
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    const ch = data.channel || {};
+    const videos = data.videos || [];
+    // 更新 YouTube 面板统计卡（rows 顺序：0粉丝 1作品 2播放 3点赞 4评论 5分享 6收藏 7完播率 8互动率）
+    const setStat = (i, v) => {
+      const el = document.getElementById("yt-stat-" + i);
+      if (el) el.textContent = v;
+    };
+    setStat(0, fmt(ch.subscribers || 0));
+    setStat(1, fmt(ch.videoCount || 0));
+    setStat(2, fmt(ch.viewCount || 0));
+    const sumLikes = videos.reduce((s, v) => s + (v.likes || 0), 0);
+    const sumComments = videos.reduce((s, v) => s + (v.comments || 0), 0);
+    setStat(3, fmt(sumLikes));
+    setStat(4, fmt(sumComments));
+    // 标记统计来源
+    const statDesc = document.querySelectorAll("#panel-youtube .stat-card .d");
+    if (statDesc.length) {
+      for (let i = 0; i < Math.min(5, statDesc.length); i++) statDesc[i].textContent = "来自 YouTube API";
+    }
+    // 渲染真实视频列表
+    const list = document.getElementById("ytVideoList");
+    const section = document.getElementById("ytVideoSection");
+    if (list && videos.length) {
+      list.innerHTML = videos.map(v => `
+        <tr>
+          <td style="font-weight:600">${v.title || "(无标题)"}</td>
+          <td>${(v.publishedAt || "").replace("T", " ").slice(0, 16)}</td>
+          <td>${fmt(v.views || 0)}</td>
+          <td>${fmt(v.likes || 0)}</td>
+          <td>${fmt(v.comments || 0)}</td>
+        </tr>`).join("");
+      if (section) section.style.display = "block";
+    }
+    // 记录真实数据并同步更新全局总览（其余平台仍为示例）
+    ytLive = { fans: ch.subscribers || 0, works: ch.videoCount || 0, plays: ch.viewCount || 0 };
+    updateOverview();
+  } catch (e) {
+    // 接口失败：保留面板内原有示例数据，仅在控制台提示
+    console.warn("[yt] 拉取 YouTube 真实数据失败，已回退到示例数据：", e);
+  }
+}
+
+// 全局总览实时汇总：以示例总数为基准，用已接入平台真实数据替换对应平台示例值
+let ytLive = null;
+let biliLive = null;
+function updateOverview() {
+  let fans = total.fans, works = total.works, plays = total.plays;
+  if (ytLive) {
+    fans += ytLive.fans - PLATFORMS[0].fans;
+    works += ytLive.works - PLATFORMS[0].works;
+    plays += ytLive.plays - PLATFORMS[0].plays;
+  }
+  if (biliLive) {
+    fans += biliLive.fans - PLATFORMS[5].fans;
+    works += biliLive.works - PLATFORMS[5].works;
+    plays += biliLive.plays - PLATFORMS[5].plays;
+  }
+  document.getElementById("mFans").textContent = fmt(fans);
+  document.getElementById("mWorks").textContent = fmt(works);
+  document.getElementById("mPlays").textContent = fmt(plays);
+  document.getElementById("mAvg").textContent = fmt(Math.round(plays / (works || 1)));
+}
+
+// 2.1) Bilibili Tab 面板：优先拉取 /api/bilibili/videos 真实数据填充，失败回退示例数据（API 由 yt-server.js 提供）
+async function loadBilibiliData() {
+  try {
+    const res = await fetch("/api/bilibili/videos");
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    const ch = data.channel || {};
+    const videos = data.videos || [];
+    // 更新 Bilibili 面板统计卡（rows 顺序：0粉丝 1作品 2播放 3点赞 4评论 5分享 6收藏 7完播率 8互动率）
+    const setStat = (i, v) => {
+      const el = document.getElementById("bili-stat-" + i);
+      if (el) el.textContent = v;
+    };
+    setStat(0, fmt(ch.followers || 0));
+    setStat(1, fmt(ch.videoCount || 0));
+    setStat(2, fmt(ch.viewCount || 0));
+    setStat(3, fmt(ch.likeCount || 0));
+    const sumComments = videos.reduce((s, v) => s + (v.comments || 0), 0);
+    setStat(4, fmt(sumComments));
+    // 标记统计来源
+    const statDesc = document.querySelectorAll("#panel-bilibili .stat-card .d");
+    if (statDesc.length) {
+      for (let i = 0; i < Math.min(5, statDesc.length); i++) statDesc[i].textContent = "来自 Bilibili API";
+    }
+    // 渲染真实视频列表
+    const list = document.getElementById("biliVideoList");
+    const section = document.getElementById("biliVideoSection");
+    if (list && videos.length) {
+      list.innerHTML = videos.map(v => `
+        <tr>
+          <td style="font-weight:600">${v.title || "(无标题)"}</td>
+          <td>${(v.publishedAt || "").replace("T", " ").slice(0, 16)}</td>
+          <td>${fmt(v.views || 0)}</td>
+          <td>${fmt(v.likes || 0)}</td>
+          <td>${fmt(v.comments || 0)}</td>
+        </tr>`).join("");
+      if (section) section.style.display = "block";
+    }
+    // 记录真实数据并同步更新全局总览
+    biliLive = { fans: ch.followers || 0, works: ch.videoCount || 0, plays: ch.viewCount || 0 };
+    updateOverview();
+  } catch (e) {
+    // 接口失败：保留面板内原有示例数据，仅在控制台提示
+    console.warn("[bili] 拉取 Bilibili 真实数据失败，已回退到示例数据：", e);
+  }
+}
+
+// 3) 评论管理：从 YouTube 拉取真实评论并渲染进列表
+let ytCommentsLoaded = false;
+async function fetchYouTubeComments() {
+  const btn = document.getElementById("fetchYTComments");
+  if (!btn || ytCommentsLoaded) return;
+  btn.classList.add("loading");
+  btn.textContent = "拉取中...";
+  try {
+    const res = await fetch("/api/youtube/comments");
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    const comments = data.comments || [];
+    comments.forEach(c => {
+      COMMENTS.push({
+        id: "yt-" + c.id,            // 字符串 id，避免与示例评论数字 id 冲突
+        platform: "youtube",
+        nick: c.author || "匿名用户",
+        avatar: c.avatar || "",
+        avatarColor: "#ff4e45",
+        content: c.text || "",
+        time: (c.publishedAt || "").replace("T", " ").slice(0, 16),
+        likes: c.likeCount || 0,
+        video: c.videoTitle || "",
+        videoId: c.videoId || "",
+        commentApiId: c.id,          // 真实评论 id，回复时传给 /api/youtube/reply
+        replyCount: c.replyCount || 0,
+        status: "pending",
+        reply: "",
+        source: "youtube-api"        // 标记来源：回复时走 YouTube API
+      });
+    });
+    ytCommentsLoaded = true;
+    btn.classList.remove("loading");
+    btn.textContent = "✓ 已拉取 " + comments.length + " 条";
+    // 自动切到 YouTube 筛选方便查看
+    commentFilter = "youtube";
+    document.querySelectorAll("#commentFilter .filter-btn").forEach(b => b.classList.toggle("active", b.dataset.p === "youtube"));
+    renderComments();
+  } catch (e) {
+    console.warn("[yt] 拉取 YouTube 评论失败：", e);
+    btn.classList.remove("loading");
+    btn.textContent = "拉取失败，点击重试";
+    alert("拉取 YouTube 评论失败，请确认已通过 http://localhost:8080 访问且 yt-server.js 已启动");
+  }
+}
+
+// 3.1) 评论管理：从 B 站拉取真实评论并渲染进列表（先取前 5 个视频 bvid，再逐视频拉评论合并，API 由 yt-server.js 提供）
+let biliCommentsLoaded = false;
+async function fetchBilibiliComments() {
+  const btn = document.getElementById("fetchBiliComments");
+  if (!btn || biliCommentsLoaded) return;
+  btn.classList.add("loading");
+  btn.textContent = "拉取中...";
+  let total = 0;
+  try {
+    // 第一步：取 UP 主前 5 个视频的 bvid
+    const vRes = await fetch("/api/bilibili/videos");
+    if (!vRes.ok) throw new Error("HTTP " + vRes.status);
+    const vData = await vRes.json();
+    const videos = (vData.videos || []).slice(0, 5);
+    if (!videos.length) throw new Error("no videos");
+    // 第二步：逐个视频拉取真实评论
+    for (const v of videos) {
+      const cRes = await fetch("/api/bilibili/comments?bvid=" + encodeURIComponent(v.id));
+      if (!cRes.ok) continue;
+      const cData = await cRes.json();
+      (cData.comments || []).forEach(c => {
+        COMMENTS.push({
+          id: c.id,                  // API 返回 id 已带 bili- 前缀，作为唯一标识
+          platform: "bilibili",
+          nick: c.author || "匿名用户",
+          avatar: c.avatar || "",
+          avatarColor: "#00a1d6",
+          content: c.text || "",
+          time: (c.publishedAt || "").replace("T", " ").slice(0, 16),
+          likes: c.likeCount || 0,
+          video: c.videoTitle || "",
+          videoId: c.videoId || "",
+          commentApiId: String(c.id).replace(/^bili-/, ""),  // 去掉前缀的原始 rpid，回复时传给 /api/bilibili/reply
+          replyCount: c.replyCount || 0,
+          status: "pending",
+          reply: "",
+          source: "bilibili-api"    // 标记来源：回复时走 Bilibili API
+        });
+        total++;
+      });
+    }
+    biliCommentsLoaded = true;
+    btn.classList.remove("loading");
+    btn.textContent = "✓ 已拉取 " + total + " 条";
+    // 自动切到 Bilibili 筛选方便查看
+    commentFilter = "bilibili";
+    document.querySelectorAll("#commentFilter .filter-btn").forEach(b => b.classList.toggle("active", b.dataset.p === "bilibili"));
+    renderComments();
+  } catch (e) {
+    console.warn("[bili] 拉取 Bilibili 评论失败：", e);
+    btn.classList.remove("loading");
+    btn.textContent = "拉取失败，点击重试";
+    alert("拉取 Bilibili 评论失败，请确认已通过 http://localhost:8080 访问且 yt-server.js 已启动");
+  }
+}
+
+// 绑定"从 YouTube / 从 B站 拉取真实评论"按钮
+const ytFetchBtn = document.getElementById("fetchYTComments");
+if (ytFetchBtn) ytFetchBtn.onclick = fetchYouTubeComments;
+const biliFetchBtn = document.getElementById("fetchBiliComments");
+if (biliFetchBtn) biliFetchBtn.onclick = fetchBilibiliComments;
+
+// 页面加载时初始化平台接入（API 由 yt-server.js 提供，需通过 http://localhost:8080 访问）
+initStatus();
+loadYouTubeData();
+loadBilibiliData();
+
+/* ================== Chart.js 用户画像 ================== */
+Chart.defaults.color = "#9ca3af";
+Chart.defaults.borderColor = "rgba(255,255,255,.06)";
+Chart.defaults.font.family = "'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif";
+
+// 年龄分布
+new Chart(document.getElementById("chartAge"), {
+  type: "bar",
+  data: {
+    labels: ["18岁以下", "18-24", "25-30", "31-35", "36-40", "40岁以上"],
+    datasets: [{
+      label: "粉丝占比 (%)",
+      data: [8, 26, 32, 18, 11, 5],
+      backgroundColor: "rgba(0,212,255,.75)",
+      borderRadius: 8,
+      maxBarThickness: 42
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { beginAtZero: true, grid: { color: "rgba(255,255,255,.06)" }, ticks: { callback: v => v + "%" } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 性别比例
+new Chart(document.getElementById("chartGender"), {
+  type: "doughnut",
+  data: {
+    labels: ["女性", "男性", "其他"],
+    datasets: [{
+      data: [58, 39, 3],
+      backgroundColor: ["#ff6b9d", "#00d4ff", "#9ca3af"],
+      borderWidth: 0
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    cutout: "62%",
+    plugins: {
+      legend: { position: "bottom", labels: { padding: 16, usePointStyle: true } },
+      tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed}%` } }
+    }
+  }
+});
+
+// 地域分布
+new Chart(document.getElementById("chartRegion"), {
+  type: "bar",
+  data: {
+    labels: ["广东", "江苏", "浙江", "山东", "四川", "北京", "河南", "上海"],
+    datasets: [{
+      label: "粉丝占比 (%)",
+      data: [15.2, 8.7, 7.9, 7.1, 6.4, 5.8, 5.2, 4.9],
+      backgroundColor: "rgba(124,92,255,.8)",
+      borderRadius: 8,
+      maxBarThickness: 34
+    }]
+  },
+  options: {
+    indexAxis: "y",
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { beginAtZero: true, grid: { color: "rgba(255,255,255,.06)" }, ticks: { callback: v => v + "%" } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// 活跃时段
+new Chart(document.getElementById("chartActive"), {
+  type: "line",
+  data: {
+    labels: ["0点","2点","4点","6点","8点","10点","12点","14点","16点","18点","20点","22点"],
+    datasets: [{
+      label: "活跃指数",
+      data: [12, 6, 3, 4, 18, 42, 55, 46, 38, 62, 88, 48],
+      borderColor: "#00d4ff",
+      backgroundColor: "rgba(0,212,255,.15)",
+      fill: true,
+      tension: .4,
+      pointRadius: 3,
+      pointBackgroundColor: "#00d4ff"
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { beginAtZero: true, grid: { color: "rgba(255,255,255,.06)" } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+</script>
+</body>
+</html>
