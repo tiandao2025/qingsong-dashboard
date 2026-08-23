@@ -3,22 +3,31 @@
     "mid": 3493270613133655,
     "name": "设计师青松",
     "face": "https://i1.hdslb.com/bfs/face/3137cc80075c3ab29c1cf73966ee9e24c3f18731.jpg",
-    "sign": "",
+    "sign": "学习资料领取：https://qingsong.ggff.net/blog",
     "followers": 31,
     "following": 7,
-    "videoCount": 51,
+    "videoCount": 0,
     "viewCount": 0,
     "likeCount": 0
   },
   "videos": [
     {
+      "id": "BV1dB886XEMh",
+      "title": "最强设计师效果图工作流！",
+      "publishedAt": "2026-08-23T17:18:57.000Z",
+      "thumb": "https://i2.hdslb.com/bfs/archive/a3466abe66168d58ed8eb3033943f894ab408736.jpg",
+      "views": 2,
+      "likes": 0,
+      "comments": 0
+    },
+    {
       "id": "BV18T8t6TEKe",
       "title": "一盘传三代，你走它还在，零成本打造一辈子也用不完的私有云盘",
       "publishedAt": "2026-08-23T06:08:48.000Z",
       "thumb": "https://i2.hdslb.com/bfs/archive/d3ace5a403e13de7433138f89794ea201d61b341.jpg",
-      "views": 35,
+      "views": 36,
       "likes": 0,
-      "comments": 1
+      "comments": 2
     },
     {
       "id": "BV15L8B6rEb7",
@@ -34,7 +43,7 @@
       "title": "如何拥有永久免费服务器",
       "publishedAt": "2026-08-20T18:04:42.000Z",
       "thumb": "https://i2.hdslb.com/bfs/archive/e4bc143cd7736fb55d8602a4e44caa853d9d6929.jpg",
-      "views": 59,
+      "views": 60,
       "likes": 0,
       "comments": 1
     },
@@ -179,15 +188,6 @@
       "publishedAt": "2024-11-15T11:23:09.000Z",
       "thumb": "https://i2.hdslb.com/bfs/archive/d57795baa1ce9a843eeac85060fb473b63db2388.jpg",
       "views": 112,
-      "likes": 0,
-      "comments": 0
-    },
-    {
-      "id": "BV1E3moYUEzA",
-      "title": "第28节 智达云工具箱",
-      "publishedAt": "2024-11-15T11:22:17.000Z",
-      "thumb": "https://i2.hdslb.com/bfs/archive/9b8fd4438f1d6dd69cf93373d765cfac1da13c8c.jpg",
-      "views": 222,
       "likes": 0,
       "comments": 0
     }
