@@ -1,8 +1,16 @@
 {
-  "updated_at": "2026-08-23T16:24:18.582Z",
+  "updated_at": "2026-08-23T17:04:36.889Z",
   "youtube": {
-    "authorized": false,
-    "error": "fetch failed"
+    "authorized": true,
+    "channel": {
+      "id": "UCpxROHzkMjSzLmIqtdKmM9g",
+      "title": "QS-111",
+      "thumb": "https://yt3.ggpht.com/l_IPFWXdm1RK5Jro9WwH3Db2ZQLlOzcIVSOkPGbZyTjONiIXqJYbcmLAIGtxBw5V6nzGI37Qiw=s88-c-k-c0x00ffffff-no-rj",
+      "subscribers": 4,
+      "videoCount": 41,
+      "viewCount": 688,
+      "uploadsPlaylist": "UUpxROHzkMjSzLmIqtdKmM9g"
+    }
   },
   "bilibili": {
     "mode": "公开数据（线上定时同步）",
