@@ -186,9 +186,32 @@
     .notice { white-space: normal; }
     .header h1 { font-size: 20px; }
   }
+
+  /* ================== 登录遮罩 ================== */
+  #loginOverlay { position: fixed; inset: 0; background: #0a0e17; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+  .login-card { width: 320px; padding: 36px 32px; border-radius: 16px; background: #121826; border: 1px solid rgba(99,102,241,.25); box-shadow: 0 20px 60px rgba(0,0,0,.5); text-align: center; }
+  .login-logo { height: 48px; margin-bottom: 14px; border-radius: 10px; }
+  .login-card h2 { color: #e5e7eb; font-size: 18px; margin: 0 0 20px; font-weight: 600; }
+  .login-card input { width: 100%; box-sizing: border-box; padding: 12px 14px; border-radius: 8px; border: 1px solid #2a3245; background: #0d1220; color: #e5e7eb; font-size: 14px; outline: none; margin-bottom: 12px; }
+  .login-card input:focus { border-color: var(--accent); }
+  .login-card button { width: 100%; padding: 12px; border: none; border-radius: 8px; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; font-size: 15px; cursor: pointer; font-weight: 600; }
+  .login-card button:hover { filter: brightness(1.1); }
+  .login-card #loginMsg { color: #f87171; font-size: 13px; min-height: 18px; margin: 10px 0 0; }
+  .login-card .login-tip { color: #6b7280; font-size: 12px; margin-top: 14px; }
 </style>
 </head>
 <body>
+<!-- 登录遮罩：未验证前覆盖整个页面 -->
+<div id="loginOverlay">
+  <div class="login-card">
+    <img src="./LOGO.png" alt="logo" class="login-logo">
+    <h2>青松设计 · 数据后台</h2>
+    <input type="password" id="loginPwd" placeholder="请输入访问密码" autocomplete="off">
+    <button id="loginBtn" onclick="doLogin()">登 录</button>
+    <p id="loginMsg"></p>
+    <p class="login-tip">仅限运营者访问</p>
+  </div>
+</div>
 <div class="container">
 
   <!-- Header：左上角品牌 LOGO（图片已复制到本站目录 LOGO.png） -->
@@ -573,7 +596,7 @@ async function sendReply(id) {
     try {
       const res = await fetch("/api/youtube/reply", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify({ text, videoId: c.videoId, commentId: c.commentApiId })
       });
       if (!res.ok) throw new Error("HTTP " + res.status);
@@ -614,12 +637,38 @@ document.getElementById("onlyPending").addEventListener("change", e => {
 // 初始化渲染评论
 renderComments();
 
+/* ================== 登录鉴权（密码 sha256 校验；本地 API 请求附带 x-auth-hash 头） ================== */
+const PAGE_HASH = "51c7cac89c088259f3f4b049885bfbba3e7f3bb5b50f709820ee74ec1966a184"; // sha256(sfggefswc1988)
+async function sha256Hex(s) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+function authHeaders() {
+  return sessionStorage.getItem("qs_login") === "1" ? { "x-auth-hash": PAGE_HASH } : {};
+}
+async function doLogin() {
+  const input = document.getElementById("loginPwd").value;
+  const msg = document.getElementById("loginMsg");
+  if (!input) { msg.textContent = "请输入密码"; return; }
+  try {
+    if (await sha256Hex(input) === PAGE_HASH) {
+      sessionStorage.setItem("qs_login", "1");
+      document.getElementById("loginOverlay").style.display = "none";
+      initPage();
+    } else {
+      msg.textContent = "密码错误，请重试";
+    }
+  } catch (e) {
+    msg.textContent = "校验失败，请重试";
+  }
+}
+
 /* ================== YouTube 真实数据接入（API 由 yt-server.js 提供，需通过 http://localhost:8080 访问） ================== */
 
 // 统一数据源加载：优先本地 yt-server.js 实时 API，失败则读线上静态 data/*.json（定时同步快照）
 async function fetchData(apiPath, jsonPath) {
   try {
-    const res = await fetch(apiPath);
+    const res = await fetch(apiPath, { headers: authHeaders() });
     if (res.ok) return { source: 'api', data: await res.json() };
   } catch (e) { /* 本地服务未启动，转静态数据 */ }
   try {
@@ -907,7 +956,7 @@ async function fetchBilibiliComments() {
       const videos = (vData.videos || []).slice(0, 5);
       if (!videos.length) throw new Error("no videos");
       for (const v of videos) {
-        const cRes = await fetch("/api/bilibili/comments?bvid=" + encodeURIComponent(v.id));
+        const cRes = await fetch("/api/bilibili/comments?bvid=" + encodeURIComponent(v.id), { headers: authHeaders() });
         if (!cRes.ok) continue;
         const cData = await cRes.json();
         (cData.comments || []).forEach(pushComment);
@@ -935,9 +984,19 @@ const biliFetchBtn = document.getElementById("fetchBiliComments");
 if (biliFetchBtn) biliFetchBtn.onclick = fetchBilibiliComments;
 
 // 页面加载时初始化平台接入（API 由 yt-server.js 提供，需通过 http://localhost:8080 访问）
-initStatus();
-loadYouTubeData();
-loadBilibiliData();
+function initPage() {
+  initStatus();
+  loadYouTubeData();
+  loadBilibiliData();
+}
+// 已登录直接初始化，未登录等验证后执行
+if (sessionStorage.getItem("qs_login") === "1") {
+  document.getElementById("loginOverlay").style.display = "none";
+  initPage();
+} else {
+  document.getElementById("loginPwd").addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); });
+  document.getElementById("loginPwd").focus();
+}
 
 /* ================== Chart.js 用户画像 ================== */
 Chart.defaults.color = "#9ca3af";
