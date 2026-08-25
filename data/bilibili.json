@@ -12,11 +12,20 @@
   },
   "videos": [
     {
+      "id": "BV1uihj6rE7B",
+      "title": "Sketchup 2026安装方法",
+      "publishedAt": "2026-08-25T16:53:07.000Z",
+      "thumb": "https://i1.hdslb.com/bfs/archive/30c9bb0e3cbfe85985cba18e246b39b3aaf1d14e.jpg",
+      "views": 1,
+      "likes": 0,
+      "comments": 0
+    },
+    {
       "id": "BV1dB886XEMh",
       "title": "最强设计师效果图工作流！",
       "publishedAt": "2026-08-23T17:18:57.000Z",
       "thumb": "https://i2.hdslb.com/bfs/archive/a3466abe66168d58ed8eb3033943f894ab408736.jpg",
-      "views": 27,
+      "views": 28,
       "likes": 0,
       "comments": 0
     },
@@ -179,15 +188,6 @@
       "publishedAt": "2024-11-15T11:25:21.000Z",
       "thumb": "https://i0.hdslb.com/bfs/archive/12157b5b85df4b937e7ee1f2e2f79266f4c9a5ff.jpg",
       "views": 30,
-      "likes": 0,
-      "comments": 0
-    },
-    {
-      "id": "BV1JgmoYJE8h",
-      "title": "第30节  智达云工具箱3",
-      "publishedAt": "2024-11-15T11:23:09.000Z",
-      "thumb": "https://i2.hdslb.com/bfs/archive/d57795baa1ce9a843eeac85060fb473b63db2388.jpg",
-      "views": 112,
       "likes": 0,
       "comments": 0
     }
