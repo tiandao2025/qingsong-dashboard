@@ -1,16 +1,8 @@
 {
-  "updated_at": "2026-08-30T06:11:05.912Z",
+  "updated_at": "2026-08-30T12:06:14.715Z",
   "youtube": {
-    "authorized": true,
-    "channel": {
-      "id": "UCpxROHzkMjSzLmIqtdKmM9g",
-      "title": "青松设计",
-      "thumb": "https://yt3.ggpht.com/WZTzPqyvd9rQ1OM8LaFD9zyoQk1CK8UEwHIdstYcU3CyKGgDcAJN0boMe8l1zritDN1W7E_otM4=s88-c-k-c0x00ffffff-no-rj",
-      "subscribers": 5,
-      "videoCount": 45,
-      "viewCount": 724,
-      "uploadsPlaylist": "UUpxROHzkMjSzLmIqtdKmM9g"
-    }
+    "authorized": false,
+    "error": "YT Token 刷新失败: Token has been expired or revoked."
   },
   "bilibili": {
     "mode": "公开数据（线上定时同步）",
@@ -20,10 +12,10 @@
       "mid": 3493270613133655,
       "name": "设计师青松",
       "face": "https://i1.hdslb.com/bfs/face/3137cc80075c3ab29c1cf73966ee9e24c3f18731.jpg",
-      "sign": "",
+      "sign": "学习资料领取：https://qingsong.ggff.net/blog",
       "followers": 32,
       "following": 0,
-      "videoCount": 53,
+      "videoCount": 0,
       "viewCount": 0,
       "likeCount": 0
     }
