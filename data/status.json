@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-01T00:20:28.199Z",
+  "updated_at": "2026-09-01T05:26:06.853Z",
   "youtube": {
     "authorized": false,
     "error": "YT Token 刷新失败: Token has been expired or revoked."
@@ -15,7 +15,7 @@
       "sign": "",
       "followers": 32,
       "following": 0,
-      "videoCount": 53,
+      "videoCount": 54,
       "viewCount": 0,
       "likeCount": 0
     }
