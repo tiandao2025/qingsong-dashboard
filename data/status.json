@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-04T13:57:36.983Z",
+  "updated_at": "2026-09-04T17:26:07.181Z",
   "youtube": {
     "authorized": false,
     "error": "YT Token 刷新失败: Token has been expired or revoked."
@@ -12,10 +12,10 @@
       "mid": 3493270613133655,
       "name": "设计师青松",
       "face": "https://i1.hdslb.com/bfs/face/3137cc80075c3ab29c1cf73966ee9e24c3f18731.jpg",
-      "sign": "学习资料领取：https://qingsong.ggff.net/blog",
+      "sign": "",
       "followers": 33,
       "following": 0,
-      "videoCount": 0,
+      "videoCount": 55,
       "viewCount": 0,
       "likeCount": 0
     }
