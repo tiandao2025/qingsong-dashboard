@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-08T08:14:58.361Z",
+  "updated_at": "2026-09-08T12:58:21.082Z",
   "youtube": {
     "authorized": false,
     "error": "YT Token 刷新失败: Token has been expired or revoked."
@@ -13,7 +13,7 @@
       "name": "设计师青松",
       "face": "https://i1.hdslb.com/bfs/face/3137cc80075c3ab29c1cf73966ee9e24c3f18731.jpg",
       "sign": "",
-      "followers": 33,
+      "followers": 34,
       "following": 0,
       "videoCount": 55,
       "viewCount": 0,
