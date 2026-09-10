@@ -1,8 +1,8 @@
 {
-  "updated_at": "2026-09-10T16:52:01.357Z",
+  "updated_at": "2026-09-10T19:26:18.798Z",
   "youtube": {
     "authorized": false,
-    "error": "YT Token 刷新失败: Token has been expired or revoked."
+    "error": "YT Token 刷新失败: Bad Request"
   },
   "bilibili": {
     "mode": "公开数据（线上定时同步）",
