@@ -3,14 +3,23 @@
     "mid": 3493270613133655,
     "name": "设计师青松",
     "face": "https://i1.hdslb.com/bfs/face/3137cc80075c3ab29c1cf73966ee9e24c3f18731.jpg",
-    "sign": "学习资料领取：https://qingsong.ggff.net/blog",
+    "sign": "",
     "followers": 37,
     "following": 0,
-    "videoCount": 0,
+    "videoCount": 58,
     "viewCount": 0,
     "likeCount": 0
   },
   "videos": [
+    {
+      "id": "BV142et65ENx",
+      "title": "第1003套设计案例——上海史总夫妇雅居",
+      "publishedAt": "2026-09-19T12:14:37.000Z",
+      "thumb": "https://i2.hdslb.com/bfs/archive/9b4a98667390f4eb91e156a03db06124d2f1296e.jpg",
+      "views": 3,
+      "likes": 0,
+      "comments": 0
+    },
     {
       "id": "BV1vRYo6BEC7",
       "title": "用REXWIT快速生成1比1写实效果图",
@@ -25,7 +34,7 @@
       "title": "产出不受任何限制的AI视频工作流，MINI MAX H3 AI短剧免费制作全流程",
       "publishedAt": "2026-09-11T16:23:52.000Z",
       "thumb": "https://i1.hdslb.com/bfs/archive/8e312b7645170d93f59ab38da0a72454f4f17b60.jpg",
-      "views": 96,
+      "views": 97,
       "likes": 0,
       "comments": 1
     },
@@ -70,7 +79,7 @@
       "title": "一盘传三代，你走它还在，零成本打造一辈子也用不完的私有云盘",
       "publishedAt": "2026-08-23T06:08:48.000Z",
       "thumb": "https://i2.hdslb.com/bfs/archive/d3ace5a403e13de7433138f89794ea201d61b341.jpg",
-      "views": 687,
+      "views": 694,
       "likes": 0,
       "comments": 3
     },
@@ -181,15 +190,6 @@
       "views": 56,
       "likes": 0,
       "comments": 0
-    },
-    {
-      "id": "BV1RzmdY6EEh",
-      "title": "cad文件导入SU建模流程",
-      "publishedAt": "2024-11-15T11:36:18.000Z",
-      "thumb": "https://i0.hdslb.com/bfs/archive/b646e241f426c28169ffb59518cc9d829735bcb1.jpg",
-      "views": 7570,
-      "likes": 0,
-      "comments": 3
     }
   ]
 }
