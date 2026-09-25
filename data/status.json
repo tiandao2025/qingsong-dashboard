@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-25T15:23:51.198Z",
+  "updated_at": "2026-09-25T19:23:55.301Z",
   "youtube": {
     "authorized": false,
     "error": "YT Token 刷新失败: Bad Request"
@@ -12,10 +12,10 @@
       "mid": 3493270613133655,
       "name": "设计师青松",
       "face": "https://i1.hdslb.com/bfs/face/3137cc80075c3ab29c1cf73966ee9e24c3f18731.jpg",
-      "sign": "学习资料领取：https://qingsong.ggff.net/blog",
+      "sign": "",
       "followers": 37,
       "following": 1,
-      "videoCount": 0,
+      "videoCount": 58,
       "viewCount": 0,
       "likeCount": 0
     }
