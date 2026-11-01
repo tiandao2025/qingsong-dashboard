@@ -6,11 +6,20 @@
     "sign": "",
     "followers": 45,
     "following": 1,
-    "videoCount": 62,
+    "videoCount": 63,
     "viewCount": 0,
     "likeCount": 0
   },
   "videos": [
+    {
+      "id": "BV1zhxx6MEd1",
+      "title": "别再拿AI只聊天了，MUSE已经能替我干活了",
+      "publishedAt": "2026-11-01T13:29:24.000Z",
+      "thumb": "https://i0.hdslb.com/bfs/archive/08ec6830c0cb5264dcd8f9a1215cd00dad3a5f3c.jpg",
+      "views": 20,
+      "likes": 0,
+      "comments": 1
+    },
     {
       "id": "BV1mzn86SEth",
       "title": "与君共勉",
@@ -34,7 +43,7 @@
       "title": "被人遗忘的MARVIS",
       "publishedAt": "2026-10-10T20:30:49.000Z",
       "thumb": "https://i1.hdslb.com/bfs/archive/ae3098dccbbd4386218f21acb72850122ac333b7.jpg",
-      "views": 36,
+      "views": 38,
       "likes": 0,
       "comments": 1
     },
@@ -61,7 +70,7 @@
       "title": "用REXWIT快速生成1比1写实效果图",
       "publishedAt": "2026-09-12T17:34:13.000Z",
       "thumb": "https://i0.hdslb.com/bfs/archive/1643616a4a850efe0937cc67400a7787ecaf617b.jpg",
-      "views": 39,
+      "views": 40,
       "likes": 0,
       "comments": 1
     },
@@ -70,7 +79,7 @@
       "title": "产出不受任何限制的AI视频工作流，MINI MAX H3 AI短剧免费制作全流程",
       "publishedAt": "2026-09-11T16:23:52.000Z",
       "thumb": "https://i1.hdslb.com/bfs/archive/8e312b7645170d93f59ab38da0a72454f4f17b60.jpg",
-      "views": 145,
+      "views": 149,
       "likes": 0,
       "comments": 1
     },
@@ -97,7 +106,7 @@
       "title": "Sketchup 2026安装方法",
       "publishedAt": "2026-08-25T16:53:07.000Z",
       "thumb": "https://i1.hdslb.com/bfs/archive/30c9bb0e3cbfe85985cba18e246b39b3aaf1d14e.jpg",
-      "views": 313,
+      "views": 314,
       "likes": 0,
       "comments": 0
     },
@@ -133,7 +142,7 @@
       "title": "如何拥有永久免费服务器",
       "publishedAt": "2026-08-20T18:04:42.000Z",
       "thumb": "https://i2.hdslb.com/bfs/archive/e4bc143cd7736fb55d8602a4e44caa853d9d6929.jpg",
-      "views": 436,
+      "views": 438,
       "likes": 0,
       "comments": 1
     },
@@ -179,15 +188,6 @@
       "publishedAt": "2024-11-15T11:40:28.000Z",
       "thumb": "https://i0.hdslb.com/bfs/archive/30c9b512edf5cbc62f80d4d9542f22dc40a9dd44.jpg",
       "views": 49,
-      "likes": 0,
-      "comments": 0
-    },
-    {
-      "id": "BV1aymdYTEBc",
-      "title": "解决横型空间卡顿的几种方法",
-      "publishedAt": "2024-11-15T11:39:59.000Z",
-      "thumb": "https://i1.hdslb.com/bfs/archive/c3044db7e628146552a3169f1e76db830b67e3d2.jpg",
-      "views": 23,
       "likes": 0,
       "comments": 0
     }
