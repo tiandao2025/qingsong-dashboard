@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-04T15:38:35.763Z",
+  "updated_at": "2026-11-04T21:41:50.560Z",
   "youtube": {
     "authorized": false,
     "error": "YT Token 刷新失败: Bad Request"
@@ -15,7 +15,7 @@
       "sign": "",
       "followers": 45,
       "following": 0,
-      "videoCount": 63,
+      "videoCount": 64,
       "viewCount": 0,
       "likeCount": 0
     }

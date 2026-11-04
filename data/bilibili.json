@@ -6,17 +6,26 @@
     "sign": "",
     "followers": 45,
     "following": 0,
-    "videoCount": 63,
+    "videoCount": 64,
     "viewCount": 0,
     "likeCount": 0
   },
   "videos": [
     {
+      "id": "BV1QAxZ62E1K",
+      "title": "还在花钱找设计师？Lovart中国区开放了，一句话生成整套品牌设计",
+      "publishedAt": "2026-11-04T19:25:19.000Z",
+      "thumb": "https://i0.hdslb.com/bfs/archive/85250de2cc62e831ca8d9bb799da98618e329e51.jpg",
+      "views": 3,
+      "likes": 0,
+      "comments": 1
+    },
+    {
       "id": "BV1zhxx6MEd1",
       "title": "别再拿AI只聊天了，MUSE已经能替我干活了",
       "publishedAt": "2026-11-01T13:29:24.000Z",
       "thumb": "https://i0.hdslb.com/bfs/archive/08ec6830c0cb5264dcd8f9a1215cd00dad3a5f3c.jpg",
-      "views": 184,
+      "views": 185,
       "likes": 0,
       "comments": 4
     },
@@ -43,7 +52,7 @@
       "title": "被人遗忘的MARVIS",
       "publishedAt": "2026-10-10T20:30:49.000Z",
       "thumb": "https://i1.hdslb.com/bfs/archive/ae3098dccbbd4386218f21acb72850122ac333b7.jpg",
-      "views": 40,
+      "views": 41,
       "likes": 0,
       "comments": 1
     },
@@ -106,7 +115,7 @@
       "title": "Sketchup 2026安装方法",
       "publishedAt": "2026-08-25T16:53:07.000Z",
       "thumb": "https://i1.hdslb.com/bfs/archive/30c9bb0e3cbfe85985cba18e246b39b3aaf1d14e.jpg",
-      "views": 316,
+      "views": 317,
       "likes": 0,
       "comments": 0
     },
@@ -142,7 +151,7 @@
       "title": "如何拥有永久免费服务器",
       "publishedAt": "2026-08-20T18:04:42.000Z",
       "thumb": "https://i2.hdslb.com/bfs/archive/e4bc143cd7736fb55d8602a4e44caa853d9d6929.jpg",
-      "views": 439,
+      "views": 440,
       "likes": 0,
       "comments": 1
     },
@@ -179,15 +188,6 @@
       "publishedAt": "2024-11-15T11:40:50.000Z",
       "thumb": "https://i2.hdslb.com/bfs/archive/683aa3cb0de6581bb4e868867cbc6d85771b0cfd.jpg",
       "views": 38,
-      "likes": 0,
-      "comments": 0
-    },
-    {
-      "id": "BV1aymdYTErX",
-      "title": "SU快速导出柜体下单图纸",
-      "publishedAt": "2024-11-15T11:40:28.000Z",
-      "thumb": "https://i0.hdslb.com/bfs/archive/30c9b512edf5cbc62f80d4d9542f22dc40a9dd44.jpg",
-      "views": 50,
       "likes": 0,
       "comments": 0
     }
