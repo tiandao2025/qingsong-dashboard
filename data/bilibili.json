@@ -6,17 +6,26 @@
     "sign": "",
     "followers": 45,
     "following": 0,
-    "videoCount": 64,
+    "videoCount": 65,
     "viewCount": 0,
     "likeCount": 0
   },
   "videos": [
     {
+      "id": "BV14q4Y63EXR",
+      "title": "5天狂揽5300+星！这个开源安卓AI Mika，正在替你玩手机",
+      "publishedAt": "2026-11-05T18:47:32.000Z",
+      "thumb": "https://i2.hdslb.com/bfs/archive/d912026680bf05b6d69c722986e55863cc66be1a.jpg",
+      "views": 8,
+      "likes": 0,
+      "comments": 0
+    },
+    {
       "id": "BV1QAxZ62E1K",
       "title": "还在花钱找设计师？Lovart中国区开放了，一句话生成整套品牌设计",
       "publishedAt": "2026-11-04T19:25:19.000Z",
       "thumb": "https://i0.hdslb.com/bfs/archive/85250de2cc62e831ca8d9bb799da98618e329e51.jpg",
-      "views": 115,
+      "views": 118,
       "likes": 0,
       "comments": 1
     },
@@ -179,15 +188,6 @@
       "publishedAt": "2024-11-15T11:42:21.000Z",
       "thumb": "https://i2.hdslb.com/bfs/archive/c781ec2f0a9e3cd3c6dda0dfbaf7eca184900090.jpg",
       "views": 43,
-      "likes": 0,
-      "comments": 0
-    },
-    {
-      "id": "BV1ermdYuEK6",
-      "title": "第37节  联合推拉插件",
-      "publishedAt": "2024-11-15T11:40:50.000Z",
-      "thumb": "https://i2.hdslb.com/bfs/archive/683aa3cb0de6581bb4e868867cbc6d85771b0cfd.jpg",
-      "views": 38,
       "likes": 0,
       "comments": 0
     }
