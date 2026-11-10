@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-10T11:29:32.064Z",
+  "updated_at": "2026-11-10T18:46:35.509Z",
   "youtube": {
     "authorized": false,
     "error": "YT Token 刷新失败: Bad Request"
@@ -13,7 +13,7 @@
       "name": "青松设计师",
       "face": "https://i1.hdslb.com/bfs/face/3137cc80075c3ab29c1cf73966ee9e24c3f18731.jpg",
       "sign": "",
-      "followers": 48,
+      "followers": 49,
       "following": 0,
       "videoCount": 66,
       "viewCount": 0,
